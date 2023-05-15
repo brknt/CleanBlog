@@ -1,9 +1,11 @@
 
 const express = require('express');
 const mongoose = require('mongoose');
-
+const methodOverride = require('method-override');
 const Post = require('./models/Post');
 
+const postController = require('./controllers/postController');
+const pageController = require('./controllers/pageController');
 
 const app = express();
 
@@ -24,39 +26,24 @@ app.set('view engine', 'ejs');
 app.use(express.static('public'));
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
+app.use(methodOverride('_method',{
+    methods:["POST","GET"]
+  }));
 
 
 
 // ROUTES
-app.get('/', async (req, res) => {
-    const posts = await Post.find({});
-    res.render('index', {
-        posts
-    });
-});
+app.get('/', postController.getAllPost);
+app.get('/posts/:id', postController.getPost);
+app.post('/posts',postController.createPost);
+app.put('/posts/:id', postController.updatePost);
+app.delete('/posts/:id', postController.deletePost);
 
 
-app.get('/posts/:id', async (req, res) => {
-    const post = await Post.findById(req.params.id);
-    console.log(post);
-    
-    res.render('post',{
-        post
-    });
-});
+app.get('/about', pageController.getAboutPage);
+app.get('/add',pageController.getAddPage);
+app.get('/posts/edit/:id', pageController.getEditPage);
 
-app.get('/about', (req, res) => {
-    res.render('about');
-});
-
-app.get('/add', (req, res) => {
-    res.render('add');
-});
-
-app.post('/posts', async (req, res) => {
-    await Post.create(req.body);
-    res.redirect('/');
-});
 
 
 
