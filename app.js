@@ -9,11 +9,17 @@ const pageController = require('./controllers/pageController');
 
 const app = express();
 
-// DB CONNECT
-mongoose.connect('mongodb://localhost/cleanblog-test-db',
+// DB CONNECT 
+mongoose.connect('mongodb+srv://brknt:ZxvLsL6OGVwifqa0@cluster0.p3hsv9i.mongodb.net/',
     {
         useNewUrlParser: true,
         useUnifiedTopology: true
+    }).then(() =>{
+        console.log('DB CONNECTED!');
+        
+    }).catch((err) =>{
+        console.log(err);
+        
     });
 
 
@@ -48,7 +54,7 @@ app.get('/posts/edit/:id', pageController.getEditPage);
 
 
 
-const port = 3000;
+const port = process.env.PORT || 3000;
 app.listen(port, () => {
     console.log(`Server ${port} portunda başlatıldı...`);
 
